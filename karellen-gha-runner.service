@@ -1,0 +1,24 @@
+[Unit]
+Description=Karellen GitHub Actions Runner
+After=docker.service
+After=network.target
+After=karellen-gha-runner-configure.service
+Requires=docker.service
+
+[Service]
+Type=exec
+PassEnvironment=RUNNER_MANUALLY_TRAP_SIG ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT
+WorkingDirectory=/home/runner
+User=runner
+Group=runner
+ExecStart=/home/runner/run.sh
+ExecStopPost=/usr/bin/sudo /sbin/halt
+TimeoutStartSec=10
+TimeoutStopSec=10
+StartLimitInterval=0
+OOMScoreAdjust=-500
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
