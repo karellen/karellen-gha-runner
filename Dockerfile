@@ -23,6 +23,7 @@ ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.1
 
 RUN mkdir -p /home/runner
 WORKDIR /home/runner
+ENV DEBIAN_FRONTEND=noninteractive
 
 #
 # Systemd installation
@@ -85,6 +86,9 @@ RUN systemctl mask systemd-udevd.service \
 # Make use of stopsignal (instead of sigterm) to stop systemd containers.
 STOPSIGNAL SIGRTMIN+3
 
+# Prevents journald from reading kernel messages from /dev/kmsg
+RUN echo -e "ReadKMsg=no\nForwardToConsole=yes\nStorage=none" >> /etc/systemd/journald.conf
+
 RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && usermod -aG sudo runner \
     && usermod -aG docker runner \
@@ -92,16 +96,14 @@ RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" >> /etc/sudoers \
     && chown -R runner:runner /home/runner
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN passwd root -ld
+
 ENV RUNNER_MANUALLY_TRAP_SIG=1
 ENV ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT=1
 
 COPY karellen-gha-runner.service /lib/systemd/system
 COPY karellen-gha-runner-configure.service /lib/systemd/system
 RUN systemctl enable karellen-gha-runner-configure karellen-gha-runner
-
-# Prevents journald from reading kernel messages from /dev/kmsg
-RUN echo -e "ReadKMsg=no\nForwardToConsole=yes\nStorage=none" >> /etc/systemd/journald.conf
 
 # Set systemd as entrypoint.
 ENTRYPOINT [ "/sbin/init", "--log-level=warning" ]

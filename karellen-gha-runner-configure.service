@@ -6,11 +6,12 @@ Before=karellen-gha-runner.service
 Type=oneshot
 RemainAfterExit=true
 PassEnvironment=RUNNER_MANUALLY_TRAP_SIG ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT
-PassEnvironment=REGISTRATION_TOKEN
 WorkingDirectory=/home/runner
 User=runner
 Group=runner
-ExecStart=/home/runner/config.sh --url https://github.com/karellen --token ${REGISTRATION_TOKEN} --ephemeral --disableupdate --unattended --replace
+ExecStart=/home/runner/config.sh --url https://github.com/karellen --token $(cat /home/runner/__secure/registration_token) --ephemeral --disableupdate --unattended
+ExecStopPost=+/usr/bin/shred -u /home/runner/__secure/registration_token
+ExecStopPost=+/bin/bash -c '[ $$SERVICE_RESULT == success ] || /sbin/halt'
 TimeoutStartSec=10
 TimeoutStopSec=10
 StartLimitInterval=0
