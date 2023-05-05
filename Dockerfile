@@ -1,18 +1,4 @@
 # Karellen GitHub Actions container for Sysbox
-#
-# Description:
-#
-# This image serves as a basic reference example for user's looking to
-# run Systemd inside a system container in order to deploy various
-# services within the system container, or use it as a virtual host
-# environment.
-#
-# Usage:
-#
-# $ docker run --runtime=sysbox-runc -it --rm --name=syscont nestybox/ubuntu-jammy-systemd
-#
-# This will run systemd and prompt for a user login; the default user/password
-# in this image is "admin/admin".
 
 FROM ubuntu:jammy
 
@@ -96,13 +82,14 @@ RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" >> /etc/sudoers \
     && chown -R runner:runner /home/runner
 
+# Disable root account
 RUN passwd root -ld
 
 ENV RUNNER_MANUALLY_TRAP_SIG=1
 ENV ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT=1
 
-COPY karellen-gha-runner.service /lib/systemd/system
 COPY karellen-gha-runner-configure.service /lib/systemd/system
+COPY karellen-gha-runner.service /lib/systemd/system
 RUN systemctl enable karellen-gha-runner-configure karellen-gha-runner
 
 # Set systemd as entrypoint.

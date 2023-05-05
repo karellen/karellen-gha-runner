@@ -13,6 +13,7 @@ WorkingDirectory=/home/runner
 User=runner
 Group=runner
 ExecStart=/home/runner/run.sh
+ExecStopPost=-/bin/bash -c '/home/runner/config.sh remove --token $(cat /home/runner/__secure/removal_token)'
 ExecStopPost=+/sbin/halt
 TimeoutStartSec=10
 TimeoutStopSec=10
