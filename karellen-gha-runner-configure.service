@@ -4,13 +4,17 @@ Before=karellen-gha-runner.service
 
 [Service]
 Type=oneshot
-RemainAfterExit=true
+RemainAfterExit=yes
 PassEnvironment=RUNNER_MANUALLY_TRAP_SIG ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT
 WorkingDirectory=/home/runner
 User=runner
 Group=runner
 ExecStart=/bin/bash -c 'set -eE -o pipefail; REGISTRATION_TOKEN=$(sudo cat /home/runner/__secure/registration_token); if [ -z "$REGISTRATION_TOKEN" ]; then echo "Failed to read registration token!"; exit 1; fi; /home/runner/config.sh --url https://github.com/karellen --token "$REGISTRATION_TOKEN" --ephemeral --disableupdate --unattended'
-ExecStopPost=+/usr/bin/shred -u /home/runner/__secure/registration_token
+ExecStartPost=+/usr/bin/shred -vu /home/runner/__secure/registration_token
+# Repeat in StopPost in case we failed to start
+ExecStopPost=-+/usr/bin/shred -vu /home/runner/__secure/registration_token
+ExecStopPost=-/bin/bash -c 'set -eE -o pipefail; REMOVAL_TOKEN="$(sudo cat /home/runner/__secure/removal_token)"; if [ -z "$REMOVAL_TOKEN" ]; then echo "Failed to read removal token!"; exit 1; fi; /home/runner/config.sh remove --token "$REMOVAL_TOKEN"'
+ExecStopPost=-+/usr/bin/shred -vu /home/runner/__secure/removal_token
 ExecStopPost=+/bin/bash -c '[ "$SERVICE_RESULT" == success ] || /sbin/halt'
 TimeoutStartSec=10
 TimeoutStopSec=10

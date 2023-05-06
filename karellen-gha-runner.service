@@ -13,7 +13,6 @@ WorkingDirectory=/home/runner
 User=runner
 Group=runner
 ExecStart=/home/runner/run.sh
-ExecStopPost=-/bin/bash -c 'set -eE -o pipefail; REMOVAL_TOKEN="$(sudo cat /home/runner/__secure/removal_token)"; if [ -z "$REMOVAL_TOKEN" ]; then echo "Failed to read removal token!"; exit 1; fi; /home/runner/config.sh remove --token "$REMOVAL_TOKEN"'
 ExecStopPost=+/sbin/halt
 TimeoutStartSec=10
 TimeoutStopSec=10
