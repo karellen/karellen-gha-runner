@@ -4,7 +4,7 @@ FROM ubuntu:jammy
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.1
+ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.2
 
 
 RUN mkdir -p /home/runner
@@ -31,6 +31,7 @@ RUN apt-get update &&                            \
             unzip                                \
             python3                              \
             python3-pip                          \
+            lsb-release                          \
             udev &&                              \
                                                  \
                                                                       \
