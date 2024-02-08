@@ -4,17 +4,21 @@ FROM ubuntu:jammy
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG RUNNER_CONTAINER_HOOKS_VERSION=0.5.0
+ARG BUILDX_VERSION=0.12.1
+ARG RUNNER_CONTAINER_HOOKS_VERSION=0.5.1
 
 
 RUN mkdir -p /home/runner
 WORKDIR /home/runner
 ENV DEBIAN_FRONTEND=noninteractive
 
+COPY docker_arch.sh /tmp
+
 #
 # Systemd installation
 #
-RUN apt-get update &&                            \
+RUN set -x &&                                    \
+    apt-get update &&                            \
     apt-get install -y --no-install-recommends   \
             systemd                              \
             systemd-sysv                         \
@@ -34,11 +38,15 @@ RUN apt-get update &&                            \
             lsb-release                          \
             udev &&                              \
                                                  \
-                                                                      \
+    DOCKER_ARCH=$(/tmp/docker_arch.sh ${RUNNER_ARCH}) &&              \
     # Install Docker                                                  \
     curl -fsSL https://get.docker.com -o get-docker.sh &&             \
     sh get-docker.sh &&                                               \
     rm get-docker.sh &&                                               \
+    mkdir -p /usr/local/lib/docker/cli-plugins &&                     \
+    curl -fLo /usr/local/lib/docker/cli-plugins/docker-buildx         \
+        "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-${DOCKER_ARCH}" && \
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx &&       \
                                                                       \
     curl -f -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz \
     && tar xzf ./runner.tar.gz                                        \
