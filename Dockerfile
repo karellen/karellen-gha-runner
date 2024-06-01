@@ -4,7 +4,7 @@ FROM ubuntu:jammy
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG BUILDX_VERSION=0.13.1
+ARG BUILDX_VERSION=0.13.2
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.0
 
 
@@ -38,6 +38,8 @@ RUN set -x &&                                    \
             patch                                \
             less                                 \
             lsb-release                          \
+            gpg-agent                            \
+            software-properties-common           \
             udev &&                              \
                                                  \
     mkdir -p -m 755 /etc/apt/keyrings &&         \
