@@ -1,6 +1,6 @@
 # Karellen GitHub Actions container for Sysbox
 
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
