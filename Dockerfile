@@ -4,7 +4,7 @@ FROM ubuntu:noble
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG BUILDX_VERSION=0.19.3
+ARG BUILDX_VERSION=0.21.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.1
 
 
@@ -35,6 +35,7 @@ RUN set -x &&                                    \
             unzip                                \
             python3                              \
             python3-pip                          \
+            jq                                   \
             patch                                \
             less                                 \
             lsb-release                          \
