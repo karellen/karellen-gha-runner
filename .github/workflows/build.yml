@@ -9,7 +9,7 @@ on:
   pull_request:
 env:
   IMAGE_NAME: karellen-gha-runner
-  RUNNER_VERSION: 2.328.0
+  RUNNER_VERSION: 2.329.0
 
 jobs:
   push:
@@ -19,7 +19,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --build-arg RUNNER_ARCH="${{ runner.arch }}" --build-arg RUNNER_VERSION=$RUNNER_VERSION
