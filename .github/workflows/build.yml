@@ -9,7 +9,7 @@ on:
   pull_request:
 env:
   IMAGE_NAME: karellen-gha-runner
-  RUNNER_VERSION: 2.329.0
+  RUNNER_VERSION: 2.330.0
 
 jobs:
   push:
