@@ -53,7 +53,7 @@ RUN set -x &&                                    \
     # Install Docker                                                  \
     curl -fsSL https://get.docker.com -o get-docker.sh &&             \
     sh get-docker.sh &&                                               \
-    apt-get install -y --allow-downgrades containerd.io=1.7.29-1~ubuntu.24.04~noble && \
+    apt-get install -y --allow-downgrades containerd.io=1.7.28-1~ubuntu.24.04~noble && \
     apt-mark hold containerd.io &&                                    \
     dpkg -l &&                                                        \
     rm get-docker.sh &&                                               \
