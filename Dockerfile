@@ -4,7 +4,7 @@ FROM ubuntu:noble
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG BUILDX_VERSION=0.30.1
+ARG BUILDX_VERSION=0.31.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.7.0
 
 
@@ -53,9 +53,6 @@ RUN set -x &&                                    \
     # Install Docker                                                  \
     curl -fsSL https://get.docker.com -o get-docker.sh &&             \
     sh get-docker.sh &&                                               \
-    apt-get install -y --allow-downgrades containerd.io=1.7.28-1~ubuntu.24.04~noble && \
-    apt-mark hold containerd.io &&                                    \
-    dpkg -l &&                                                        \
     rm get-docker.sh &&                                               \
     mkdir -p /usr/local/lib/docker/cli-plugins &&                     \
     curl -fLo /usr/local/lib/docker/cli-plugins/docker-buildx         \
