@@ -4,9 +4,9 @@ FROM ubuntu:noble
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
-ARG BUILDX_VERSION=0.31.1
+ARG BUILDX_VERSION=0.32.1
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.7.0
-
+ARG RUNNER_CONTAINER_HOOKS_NO_VOLUME_VERSION=0.8.1
 
 RUN mkdir -p /home/runner
 WORKDIR /home/runner
@@ -64,7 +64,11 @@ RUN set -x &&                                    \
     && rm runner.tar.gz &&                                            \
                                                                       \
     curl -f -L -o runner-container-hooks.zip https://github.com/actions/runner-container-hooks/releases/download/v${RUNNER_CONTAINER_HOOKS_VERSION}/actions-runner-hooks-docker-${RUNNER_CONTAINER_HOOKS_VERSION}.zip \
-    && unzip ./runner-container-hooks.zip -d ./docker                 \
+    && unzip ./runner-container-hooks.zip -d ./k8s                    \
+    && rm runner-container-hooks.zip &&                               \
+                                                                      \
+    curl -f -L -o runner-container-hooks.zip https://github.com/actions/runner-container-hooks/releases/download/v${RUNNER_CONTAINER_HOOKS_NO_VOLUME_VERSION}/actions-runner-hooks-docker-${RUNNER_CONTAINER_HOOKS_NO_VOLUME_VERSION}.zip \
+    && unzip ./runner-container-hooks.zip -d ./k8s-novolume           \
     && rm runner-container-hooks.zip &&                               \
                                                                       \
     ./bin/installdependencies.sh &&                                   \
