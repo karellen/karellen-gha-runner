@@ -1,6 +1,6 @@
 # Karellen GitHub Actions container for Sysbox
 
-FROM ubuntu:noble
+FROM ubuntu:resolute
 
 ARG RUNNER_VERSION
 ARG RUNNER_ARCH
@@ -29,6 +29,7 @@ RUN set -x &&                                    \
             iproute2                             \
             kmod                                 \
             locales                              \
+            adduser                              \
             sudo                                 \
             curl                                 \
             apt-utils                            \
@@ -91,13 +92,14 @@ RUN systemctl mask systemd-udevd.service \
                    systemd-udevd-control.socket \
                    systemd-modules-load.service \
                    sys-kernel-debug.mount \
-                   sys-kernel-tracing.mount
+                   sys-kernel-tracing.mount \
+                   tmp.mount
 
 # Make use of stopsignal (instead of sigterm) to stop systemd containers.
 STOPSIGNAL SIGRTMIN+3
 
 # Prevents journald from reading kernel messages from /dev/kmsg
-RUN echo -e "ReadKMsg=no\nForwardToConsole=yes\nStorage=none" >> /etc/systemd/journald.conf
+RUN printf "ReadKMsg=no\nForwardToConsole=yes\nStorage=none\n" >> /etc/systemd/journald.conf
 
 RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && usermod -aG sudo runner \
